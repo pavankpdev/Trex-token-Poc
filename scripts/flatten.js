@@ -3,7 +3,9 @@ const fs = require('fs-extra');
 const { spawnSync } = require('child_process');
 
 // Get a list of all solidity files in the contracts directory
-const files = glob.sync('contracts/**/*.sol');
+const files = glob.sync('../contracts/**/*.sol');
+
+console.log(files)
 
 let processedCount = 0; // to keep track of processed files
 
