@@ -76,5 +76,8 @@
     "*.js": [
       "eslint"
     ]
+  },
+  "dependencies": {
+    "viem": "^2.21.19"
   }
 }
