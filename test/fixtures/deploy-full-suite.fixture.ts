@@ -15,6 +15,10 @@ export async function deployIdentityProxy(implementationAuthority: Contract['add
 export async function deployFullSuiteFixture() {
   const [deployer, tokenIssuer, tokenAgent, tokenAdmin, claimIssuer, aliceWallet, bobWallet, charlieWallet, davidWallet, anotherWallet] =
     await ethers.getSigners();
+
+  const d = await ethers.getSigners()
+  console.log(d.length)
+
   const claimIssuerSigningKey = ethers.Wallet.createRandom();
   const aliceActionKey = ethers.Wallet.createRandom();
 
@@ -105,7 +109,7 @@ export async function deployFullSuiteFixture() {
       deployer,
     )
     .then(async (proxy) => ethers.getContractAt('Token', proxy.address));
-
+  console.log({token})
   const agentManager = await ethers.deployContract('AgentManager', [token.address], tokenAgent);
 
   await identityRegistryStorage.connect(deployer).bindIdentityRegistry(identityRegistry.address);

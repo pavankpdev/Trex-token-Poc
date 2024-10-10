@@ -7,6 +7,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     const {deployer} = await getNamedAccounts();
 
+    const complianceDeployment = await deployments.get('ModularCompliance');
+    const complianceAddress = complianceDeployment.address;
+
+    const identityRegistryDeployment = await deployments.get('IdentityRegistry');
+    const identityRegistryAddress = identityRegistryDeployment.address;
+
     await deploy('Token', {
         from: deployer,
         log: true,
@@ -16,18 +22,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
                 init: {
                     methodName: 'init',
                     args: [
-                        "0x769fB1a6e97234C9e153a5bb32AB39C87A99facB",
-                        "0x037D3E0fbfdE7E50D1F19C05518cDFf7d6A8f694",
+                        identityRegistryAddress,
+                        complianceAddress,
                         "Token Testing",
                         "TT",
                         18,
-                        "0x0000000000000000000000000000000000000000"
+                        "0xCD80D3Af6add9accA9a159ABA7eb76123a3b0d3F"
                     ]
                 }
             }
         }
     });
+
 };
 export default func;
 func.tags = ['Token'];
-func.dependencies = ['TokenStorage', "AgentRoleUpgradeable"];
+func.dependencies = ['TokenStorage', "AgentRoleUpgradeable", "IdentityRegistry", "ModularCompliance"];

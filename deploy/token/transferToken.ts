@@ -1,11 +1,11 @@
-import { ethers } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import {txLogger} from "../../utils/ts-logger";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-    const { deployments, getNamedAccounts, ethers } = hre;
-    const { deployer } = await getNamedAccounts(); // Fetch deployer from namedAccounts
+    const { deployments, getNamedAccounts, ethers, getUnnamedAccounts } = hre;
+    const { deployer } = await getNamedAccounts();
+    const [alice] = await getUnnamedAccounts();
 
     const deployerSigner = await ethers.getSigner(deployer);
 
@@ -14,16 +14,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     const tokenContract = await ethers.getContractAt('Token', tokenAddress, deployerSigner);
 
-    const newOnchainID = "0xCD80D3Af6add9accA9a159ABA7eb76123a3b0d3F";
-
-    console.log(`Setting the new onchain ID to: ${newOnchainID}`);
-
-    const tx = await tokenContract.setOnchainID(newOnchainID);
+    const tx = await tokenContract.transfer(alice, 1);
 
     await tx.wait();
-    console.log(`New onchain ID has been set successfully`);
+    console.log(`Transferred Token successfully to Alice.`);
     txLogger(tx)
 };
 
 export default func;
-func.tags = ['setOnchainID'];
+func.tags = ['transferToken'];
