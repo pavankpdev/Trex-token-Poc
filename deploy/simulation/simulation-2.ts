@@ -115,10 +115,36 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     balances.afterPavan = (await token.balanceOf(pavanWallet.address)).toString();
     balances.afterMahboob = (await token.balanceOf(mahboobWallet.address)).toString();
 
-    await token.connect(pavanWallet).transfer(shyamWallet.address, 1).catch(console.log);
-
     console.log(balances);
 
+    const claimId = ethers.utils.keccak256(
+        ethers.utils.defaultAbiCoder.encode(
+            ['address', 'uint256'], // _issuer (address) and _topic (uint256)
+            [claimForMahboob.issuer, claimForMahboob.topic]
+        )
+    );
+
+    const tx = await mahboobIdentity
+        .connect(mahboobWallet)
+        .removeClaim(claimId)
+
+    await tx.wait();
+
+    // This will error out
+    await token.connect(pavanWallet).transfer(mahboobWallet.address, 1).catch(console.log);
+
+    // Optional: Revoke the existing token
+    await token.connect(acmeCorpEmployee).forcedTransfer(mahboobWallet.address, pavanWallet.address, 1).catch(console.log);
+
+    balances.beforePavan = (await token.balanceOf(pavanWallet.address)).toString();
+    balances.beforeMahboob = (await token.balanceOf(mahboobWallet.address)).toString();
+
+    await token.connect(pavanWallet).transfer(mahboobWallet.address, 1).catch(console.log);
+
+    balances.afterPavan = (await token.balanceOf(pavanWallet.address)).toString();
+    balances.afterMahboob = (await token.balanceOf(mahboobWallet.address)).toString();
+
+    console.log(balances);
 };
 export default func;
-func.tags = ['simulation'];
+func.tags = ['simulation-2'];

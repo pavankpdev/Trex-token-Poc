@@ -117,7 +117,7 @@ export async function deployFullSuiteContracts() {
         )
         .then(async (proxy) => ethers.getContractAt('Token', proxy.address));
 
-    await modularCompliance.addModule(countryAllowModule.address);
+    await modularCompliance.addModule(countryAllowModule.address); // 25
 
     await modularCompliance
         .connect(deployer)
@@ -128,6 +128,7 @@ export async function deployFullSuiteContracts() {
             countryAllowModule.address,
         );
 
+    // Acme corp
     // await countryAllowModule.connect(deployer).addAllowedCountry(INDIA_COUNTRY_CODE);
 
     await identityRegistryStorage.connect(deployer).bindIdentityRegistry(identityRegistry.address);
